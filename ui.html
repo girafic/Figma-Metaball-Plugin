@@ -1,0 +1,36 @@
+<h2>Metaball Creator</h2>
+<p>Rate: <input id="rate" value="50" type="number" min="1" max="200"></p>
+<p>handleSize: <input id="handleSize" value="24" type="number" min="1" max="30"></p>
+<button id="create">Create</button>
+<button id="cancel">Union and Done</button>
+<script>
+
+document.getElementById('create').onclick = () => {
+  const textbox1 = document.getElementById('rate');
+  const rate = parseInt(textbox1.value, 10);
+  const textbox2 = document.getElementById('handleSize');
+  const handleSize = parseInt(textbox2.value, 10);
+  parent.postMessage({ pluginMessage: { type: 'create-metaball', rate, handleSize } }, '*')
+}
+
+document.getElementById('cancel').onclick = () => {
+  parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
+}
+
+document.getElementById('rate').oninput = () => {
+	const textbox1 = document.getElementById('rate');
+  const rate = parseInt(textbox1.value, 10);
+  const textbox2 = document.getElementById('handleSize');
+  const handleSize = parseInt(textbox2.value, 10);
+	parent.postMessage({ pluginMessage: { type: 'create-metaball', rate, handleSize } }, '*')
+}
+
+document.getElementById('handleSize').oninput = () => {
+	const textbox1 = document.getElementById('rate');
+  const rate = parseInt(textbox1.value, 10);
+  const textbox2 = document.getElementById('handleSize');
+  const handleSize = parseInt(textbox2.value, 10);
+	parent.postMessage({ pluginMessage: { type: 'create-metaball', rate, handleSize } }, '*')
+}
+
+</script>
