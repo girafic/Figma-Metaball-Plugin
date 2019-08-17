@@ -1,14 +1,5 @@
-// This plugin will open a modal to prompt the user to enter a number, and
-// it will then create that many rectangles on the screen.
-// This file holds the main code for the plugins. It has access to the *document*.
-// You can access browser APIs in the <script> tag inside "ui.html" which has a
-// full browser enviroment (see documentation).
-// This shows the HTML page in "ui.html".
 figma.showUI(__html__);
 
-// Calls to "parent.postMessage" from within the HTML page will trigger this
-// callback. The callback will be passed the "pluginMessage" property of the
-// posted message.
 let lastNodes = [];
 let lastNode:VectorNode = null;
 let selectedNodes = null;
@@ -20,20 +11,19 @@ figma.ui.onmessage = msg => {
       selectedNodes = nodes;
 
       if (figma.currentPage.selection.length < 2) {
-          figma.closePlugin('Select 2 circle layers!');
+          figma.closePlugin('Select more than one circle layer!');
       } else {
           lastNodes.forEach( element => {
-            element.remove();
+            if(!element.removed) {
+              element.remove();
+            }
           });
           lastNodes = [];
           let rate:number = msg.rate || 50;
-          let handleSize:number = msg.handleSize || 24;
+          let handleSize:number = 24;
           let appearance:string = 'Half';
-
-          let arr = new Array();
-          let isCircleArr = new Array();
-          
           let index = 1;
+
           for (let i = nodes.length - 1; i >= 1; i--) {
             for (let j = i - 1; j >= 0; j--) {
               if (((nodes[i].type === 'ELLIPSE') && (nodes[i].width === nodes[i].height)) && ((nodes[j].type === 'ELLIPSE') && (nodes[j].width === nodes[j].height))) {
@@ -56,79 +46,28 @@ figma.ui.onmessage = msg => {
                   figma.closePlugin('Wrong distance');
                 }
               } else {
-                figma.closePlugin('Selected layers are not circle objects!');
+                figma.closePlugin('Selected layers are not circle layers!');
               }
             }
           }
-          
-          /*nodes.forEach(element => {
-            booleanNode.appendChild(element);
-          });
-          lastNodes.forEach(element => {
-            booleanNode.appendChild(element);
-          });*/
-          //currentArtboard.appendChild(booleanNode);
-
-        /*
-          nodes.forEach((layer: EllipseNode) => {
-              let radius = layer.width / 2;
-              let centerx1 = layer.x + radius;
-              let centerx2 = layer.y + radius;
-              let layerFills = layer.fills;
-              let layerStrokes = layer.strokes;
-
-              currentArtboard = layer.parent;
-              
-              arr.push({radius, centerx1, centerx2, layerFills, layerStrokes});
-              if ((layer.type === 'ELLIPSE') && (layer.width === layer.height)) {
-                  isCircleArr.push(true);
-              } else {
-                  isCircleArr.push(false);
-              };
-          });
-          if (isCircleArr.every(element => {return element === true})) {
-              let metaballObj = metaball(arr[0].radius, arr[1].radius, [arr[0].centerx1, arr[0].centerx2], [arr[1].centerx1, arr[1].centerx2], handleSize/10, rate/100, appearance).replace(/,/g, ' ');
-              
-              if (metaballObj) {
-                  if (lastNode) {
-                      lastNode.remove();
-                  }
-                  const node = figma.createVector();
-
-                  node.vectorPaths = [{
-                      windingRule: 'EVENODD',
-                      data: metaballObj,
-                  }];
-                  lastNode = node;
-                  node.name = 'Metaball';
-                  node.fills = arr[0].layerFills;
-                  node.strokes = arr[0].layerStrokes;
-                  currentArtboard.appendChild(node);
-              } else {
-                  figma.closePlugin('Wrong distance');
-              }
-             
-          } else {
-              figma.closePlugin('Selected layers are not circle objects!');
-          }
-           */
-  
-  
-  
       }        
-  } else if (msg.type === 'cancel') {
-      if (lastNodes.length > 0 && selectedNodes.length > 0) {
-        const booleanNode = figma.createBooleanOperation();
-        selectedNodes.forEach(element => {
+  } else if (msg.type === 'union') {
+    if ((lastNodes.length > 0) && (selectedNodes.length > 0)) {
+      const booleanNode = figma.createBooleanOperation();
+      selectedNodes.forEach(element => {
+        if(!element.removed) {
           booleanNode.appendChild(element);
-        });
-        lastNodes.forEach(element => {
+        }
+      });
+      lastNodes.forEach(element => {
+        if(!element.removed) {
           booleanNode.appendChild(element);
-        });
-        
-        currentArtboard.appendChild(booleanNode);
-      }
-      figma.closePlugin();
+        }
+      });
+      currentArtboard.appendChild(booleanNode);
+    }
+  } else {
+    figma.closePlugin();
   }
 };
 
