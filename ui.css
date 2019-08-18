@@ -1,5 +1,4 @@
-<style>
-    /*  Typography */
+/*  Typography */
 @font-face {
     font-family: 'Inter';
     font-style: normal;
@@ -27,11 +26,9 @@
     line-height: 1.5;
     margin: 16px;
   }
-
   p {
     color: #454545;
   }
-
   button {
     border-radius: 5px;
     background: white;
@@ -41,11 +38,7 @@
     margin: 0 0px;
     box-shadow: inset 0 0 0 1px black;
     outline: none;
-    width: 100%;
-    line-height: 20px;
-    margin-bottom: 10px;
   }
-
   input {
     border: none;
     outline: none;
@@ -53,38 +46,7 @@
     padding-left: 8px;
     margin-left: 4px;
   }
-
   input:hover { box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.1); }
   button:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
   .primary:focus { box-shadow: inset 0 0 0 2px rgba(0, 0, 0, 0.3); }
   input:focus { box-shadow: inset 0 0 0 2px #18A0FB; }
-
-</style>
-
-<p>Generate 2D-Metaball shapes from circle objects.</p>
-<p>Rate: <input id="rate" value="50" type="number" min="1" max="200"></p>
-<button id="create">Create</button>
-<button id="union">Union</button>
-<button id="cancel">Close</button>
-
-<script>
-  document.getElementById('create').onclick = () => {
-      const textbox1 = document.getElementById('rate');
-      const rate = parseInt(textbox1.value, 10);
-      parent.postMessage({ pluginMessage: { type: 'create-metaball', rate} }, '*')
-  }
-    
-  document.getElementById('cancel').onclick = () => {
-      parent.postMessage({ pluginMessage: { type: 'cancel' } }, '*')
-  }
-
-  document.getElementById('union').onclick = () => {
-      parent.postMessage({ pluginMessage: { type: 'union' } }, '*')
-  }
-
-  document.getElementById('rate').oninput = () => {
-      const textbox1 = document.getElementById('rate');
-      const rate = parseInt(textbox1.value, 10);
-      parent.postMessage({ pluginMessage: { type: 'create-metaball', rate } }, '*')
-  }
-</script>

@@ -1,4 +1,5 @@
-figma.showUI(__html__);
+figma.showUI(__html__, {width: 220, height: 230});
+
 
 let lastNodes = [];
 let lastNode:VectorNode = null;
@@ -40,6 +41,8 @@ figma.ui.onmessage = msg => {
                   node.name = 'MetaballShape'+ index;
                   node.fills = layer.fills;
                   node.strokes = layer.strokes;
+                  node.strokeWeight = layer.strokeWeight;
+                  node.strokeAlign = layer.strokeAlign;
                   currentArtboard.appendChild(node);
                   index++;
                 } else {
