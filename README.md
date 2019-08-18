@@ -1,22 +1,23 @@
-This plugin template uses Typescript. If you are familiar with Javascript, Typescript will
-look very familiar. In fact, valid Javascript code is already valid Typescript code.
+# Metaball
+<img src="assets/figma_metaball_plugin_demo.gif" width="100%" max-width="600px" />
+Metaball plugin generates 2D-Metaball shapes from circle objects.
 
-Typescript adds type annotations to variables. This allows code editors such as Visual Studio Code
-to provide information about the Figma API while you are writing code, as well as help catch bugs
-you previously didn't notice.
+How to use:
+1. Draw some circles and select them
+2. Right Click -> Plugins -> Metaball
+3. Click on button "Create"
 
-For more information, visit https://www.typescriptlang.org/
 
-Using Typescript requires a compiler to convert Typescript (code.ts) into Javascript (code.js)
-for the browser to run.
+This project is based on Metaball script by SATO Hiroyuki (http://shspage.com/aijs/en/#metaball).
 
-To get the TypeScript compiler working:
+# Compile with Webpack
+The main plugin code is in `src/code.ts`. The HTML for the UI is in `src/ui.html`, while the embedded JavaScript is in `src/ui.ts`.
 
-1. Download Visual Studio Code if you haven't already: https://code.visualstudio.com/.
-2. Install the TypeScript compiler globally: `sudo npm install -g typescript`.
-3. Open this directory in Visual Studio Code.
-4. Compile TypeScript to JavaScript: Run the "Terminal > Run Build Task..." menu item,
-    then select "tsc: watch - tsconfig.json". You will have to do this again every time
-    you reopen Visual Studio Code.
+These are compiled to files in `dist/`, which are what Figma will use to run your plugin.
 
-That's it! Visual Studio Code will regenerate the JavaScript file every time you save.
+To build:
+
+    $ npm install
+    $ npx webpack
+
+For more info, see: https://www.figma.com/plugin-docs/bundling-webpack/
