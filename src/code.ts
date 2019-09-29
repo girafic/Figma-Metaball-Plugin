@@ -1,24 +1,36 @@
-figma.showUI(__html__, {width: 220, height: 230});
+figma.showUI(__html__, {width: 220, height: 228});
 
 
 let lastNodes = [];
 let lastNode:VectorNode = null;
 let selectedNodes = null;
 let currentArtboard: BaseNode & ChildrenMixin | null  = figma.currentPage;
+let notificationHandler:NotificationHandler = null;
 
 figma.ui.onmessage = msg => {
   if (msg.type === 'create-metaball') {
       const nodes = figma.currentPage.selection
+      let selectedNodesInLastNodes:boolean = false;
+      if (selectedNodes) {
+        selectedNodesInLastNodes = nodes.every(n => selectedNodes.includes(n));
+      }
+
       selectedNodes = nodes;
 
       if (figma.currentPage.selection.length < 2) {
-          figma.closePlugin('Select more than one circle layer!');
+        if (notificationHandler) {
+          notificationHandler.cancel()
+        } 
+        notificationHandler = figma.notify('Select more than one circle layer!', {timeout:3})
+        
       } else {
-          lastNodes.forEach( element => {
-            if(!element.removed) {
-              element.remove();
-            }
-          });
+          if (selectedNodesInLastNodes) {
+            lastNodes.forEach( element => {
+              if(!element.removed) {
+                element.remove();
+              }
+            });
+          }
           lastNodes = [];
           let rate:number = msg.rate || 50;
           let handleSize:number = 24;
@@ -46,10 +58,10 @@ figma.ui.onmessage = msg => {
                   currentArtboard.appendChild(node);
                   index++;
                 } else {
-                  figma.closePlugin('Wrong distance');
+                  figma.notify('Wrong distance');
                 }
               } else {
-                figma.closePlugin('Selected layers are not circle layers!');
+                figma.notify('Selected layers are not circle layers!');
               }
             }
           }
