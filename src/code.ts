@@ -40,8 +40,17 @@ figma.ui.onmessage = msg => {
           for (let i = nodes.length - 1; i >= 1; i--) {
             for (let j = i - 1; j >= 0; j--) {
               if (((nodes[i].type === 'ELLIPSE') && (nodes[i].width === nodes[i].height)) && ((nodes[j].type === 'ELLIPSE') && (nodes[j].width === nodes[j].height))) {
-                let metaballObj = metaball(nodes[i].width / 2, nodes[j].width / 2, [nodes[i].x + nodes[i].width / 2, nodes[i].y + nodes[i].width / 2], [nodes[j].x + nodes[j].width / 2, nodes[j].y + nodes[j].width / 2], handleSize/10, rate/100, appearance).replace(/,/g, ' ');
-                currentArtboard = nodes[i].parent;
+                let txi = (nodes[i].parent.id !== nodes[j].parent.id) ? nodes[i].absoluteTransform[0][2] : nodes[i].x;
+                let tyi = (nodes[i].parent.id !== nodes[j].parent.id) ? nodes[i].absoluteTransform[1][2] : nodes[i].y;
+                let txj = (nodes[i].parent.id !== nodes[j].parent.id) ? nodes[j].absoluteTransform[0][2] : nodes[j].x;
+                let tyj = (nodes[i].parent.id !== nodes[j].parent.id) ? nodes[j].absoluteTransform[1][2] : nodes[j].y;
+                let metaballObj = metaball(nodes[i].width / 2, nodes[j].width / 2, [txi + nodes[i].width / 2, tyi + nodes[i].width / 2], [txj + nodes[j].width / 2, tyj + nodes[j].width / 2], handleSize/10, rate/100, appearance).replace(/,/g, ' ');
+                
+                if (nodes[i].parent.id !== nodes[j].parent.id) {
+                  currentArtboard = figma.currentPage;
+                } else {
+                  currentArtboard = nodes[i].parent;
+                }
                 if (metaballObj) {
                   let node = figma.createVector();
                   let layer: any = nodes[i];
@@ -68,18 +77,18 @@ figma.ui.onmessage = msg => {
       }        
   } else if (msg.type === 'union') {
     if ((lastNodes.length > 0) && (selectedNodes.length > 0)) {
-      const booleanNode = figma.createBooleanOperation();
+      const booleanNodes = [];
       selectedNodes.forEach(element => {
         if(!element.removed) {
-          booleanNode.appendChild(element);
+          booleanNodes.push(element);
         }
       });
       lastNodes.forEach(element => {
         if(!element.removed) {
-          booleanNode.appendChild(element);
+          booleanNodes.push(element);
         }
       });
-      currentArtboard.appendChild(booleanNode);
+      figma.union(booleanNodes, currentArtboard);
     }
   } else {
     figma.closePlugin();
